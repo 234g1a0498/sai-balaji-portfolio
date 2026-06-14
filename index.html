@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Premium software engineer portfolio for Sai Balaji Badvela, a Python Developer and AI & IoT enthusiast focused on software development, computer vision, and IoT."
+    />
+    <meta name="author" content="Sai Balaji Badvela" />
+    <meta
+      name="keywords"
+      content="Sai Balaji Badvela, Python Developer, AI, IoT, Computer Vision, OpenCV, MediaPipe, Arduino, Portfolio"
+    />
+    <meta name="theme-color" content="#05070d" />
+
+    <meta property="og:title" content="Sai Balaji Badvela | Python Developer" />
+    <meta
+      property="og:description"
+      content="Electronics and Communication Engineering student building software, AI, computer vision, and IoT projects."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="assets/WhatsApp Image 2026-06-14 at 11.03.23 AM.jpeg" />
+
+    <title>Sai Balaji Badvela | Python Developer</title>
+
+    <link rel="preconnect" href="https://cdn.tailwindcss.com" />
+    <link rel="stylesheet" href="style.css" />
+
+    <script>
+      window.tailwind = window.tailwind || {};
+      window.tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+            },
+            colors: {
+              midnight: "#05070d",
+              panel: "rgba(255, 255, 255, 0.075)",
+              line: "rgba(255, 255, 255, 0.14)",
+              cyan: "#67e8f9",
+              violet: "#a78bfa",
+              mint: "#86efac",
+            },
+            boxShadow: {
+              glow: "0 24px 80px rgba(103, 232, 249, 0.14)",
+            },
+          },
+        },
+      };
+    </script>
+    <script src="https://cdn.tailwindcss.com" defer></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" defer></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" defer></script>
+    <script src="script.js" defer></script>
+  </head>
+
+  <body class="portfolio-body">
+    <div class="page-loader" data-loader aria-label="Loading portfolio">
+      <div class="loader-mark">SB</div>
+      <div class="loader-track"><span></span></div>
+    </div>
+
+    <div class="scroll-progress" aria-hidden="true">
+      <span data-scroll-progress></span>
+    </div>
+
+    <div class="custom-cursor" data-cursor aria-hidden="true"></div>
+    <div class="custom-cursor-dot" data-cursor-dot aria-hidden="true"></div>
+
+    <canvas class="particle-canvas" data-particles aria-hidden="true"></canvas>
+
+    <div class="site-bg" aria-hidden="true">
+      <span class="light-field light-field-one"></span>
+      <span class="light-field light-field-two"></span>
+      <span class="grid-field"></span>
+    </div>
+
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header" data-animate="fade-down">
+      <nav class="nav-shell" aria-label="Primary navigation">
+        <a class="brand-mark" href="#home" aria-label="Sai Balaji Badvela home">
+          <span class="brand-icon">SB</span>
+          <span class="brand-copy">
+            <strong>Sai Balaji</strong>
+            <small>Python Developer</small>
+          </span>
+        </a>
+
+        <button
+          class="menu-toggle"
+          type="button"
+          aria-label="Open navigation menu"
+          aria-expanded="false"
+          aria-controls="primary-menu"
+          data-menu-toggle
+        >
+          <span></span>
+          <span></span>
+        </button>
+
+        <div class="nav-links" id="primary-menu" data-menu>
+          <a href="#about">About</a>
+          <a href="#projects">Projects</a>
+          <a href="#skills">Skills</a>
+          <a href="#education">Education</a>
+          <a href="#github">GitHub</a>
+          <a href="#profiles">Profiles</a>
+          <a href="#certifications">Certifications</a>
+          <a href="#achievements">Achievements</a>
+          <a href="#contact">Contact</a>
+        </div>
+
+        <button
+          class="theme-toggle"
+          type="button"
+          aria-label="Switch to light mode"
+          aria-pressed="false"
+          data-theme-toggle
+        >
+          <span class="theme-toggle-icon" aria-hidden="true"></span>
+        </button>
+      </nav>
+    </header>
+
+    <main id="main">
+      <section class="hero-section section-wrap" id="home">
+        <div class="hero-content" data-animate="fade-up">
+          <p class="eyebrow">Available for internships, projects, and developer roles</p>
+          <h1>
+            Sai Balaji Badvela builds practical software across
+            <span class="gradient-text">AI, Computer Vision, and IoT.</span>
+          </h1>
+          <p class="hero-role">
+            <span class="typing-prefix">Role:</span>
+            <span
+              class="typing-text"
+              data-typing='["Python Developer", "AI & IoT Enthusiast", "Computer Vision Builder"]'
+            >
+              Python Developer | AI & IoT Enthusiast
+            </span>
+          </p>
+          <p class="hero-summary">
+            Electronics and Communication Engineering student passionate about
+            software development, AI, computer vision, and connected hardware
+            systems that solve real problems.
+          </p>
+
+          <div class="hero-actions" aria-label="Portfolio actions">
+            <a class="primary-action" href="#projects">View Projects</a>
+            <a class="secondary-action" href="#contact">Contact Sai</a>
+            <a class="resume-action" href="assets/232323.pdf" download="Sai-Balaji-Badvela-Resume.pdf">
+              Download Resume
+            </a>
+          </div>
+        </div>
+
+        <aside class="hero-card glass-card" data-animate="fade-left" aria-label="Profile summary">
+          <div class="status-pill">
+            <span></span>
+            Recruiter-ready profile
+          </div>
+          <div class="profile-orbit">
+            <img
+              class="profile-avatar"
+              src="assets/WhatsApp Image 2026-06-14 at 11.03.23 AM.jpeg"
+              alt="Sai Balaji Badvela"
+            />
+          </div>
+          <dl class="quick-stats">
+            <div>
+              <dt>CGPA</dt>
+              <dd><span data-counter data-target="8.31" data-decimals="2">0</span></dd>
+            </div>
+            <div>
+              <dt>Focus</dt>
+              <dd>AI + IoT</dd>
+            </div>
+            <div>
+              <dt>Wins</dt>
+              <dd><span data-counter data-target="3">0</span>+</dd>
+            </div>
+          </dl>
+        </aside>
+      </section>
+
+      <section class="section-wrap split-section" id="about">
+        <div data-animate="fade-up">
+          <p class="section-kicker">About</p>
+          <h2>Engineering student with a builder-first mindset.</h2>
+        </div>
+        <div class="glass-card content-card" data-animate="fade-up">
+          <p>
+            Sai Balaji Badvela is an Electronics and Communication Engineering
+            student focused on turning strong fundamentals into useful software
+            products. His work spans Python development, OpenCV-based computer
+            vision, MediaPipe interactions, Arduino hardware, and practical IoT
+            systems.
+          </p>
+        </div>
+      </section>
+
+      <section class="section-wrap" id="projects">
+        <div class="section-heading" data-animate="fade-up">
+          <p class="section-kicker">Selected Work</p>
+          <h2>Projects with a practical engineering edge.</h2>
+        </div>
+
+        <div class="filter-bar" data-project-filters data-animate="fade-up" aria-label="Filter projects">
+          <button class="filter-chip is-active" type="button" data-filter="all" aria-pressed="true">All</button>
+          <button class="filter-chip" type="button" data-filter="python" aria-pressed="false">Python</button>
+          <button class="filter-chip" type="button" data-filter="vision" aria-pressed="false">Computer Vision</button>
+          <button class="filter-chip" type="button" data-filter="iot" aria-pressed="false">IoT</button>
+        </div>
+
+        <div class="project-grid">
+          <article class="project-card glass-card" data-project-card data-category="python automation" data-animate="fade-up">
+            <div class="project-index">01</div>
+            <h3>Digital Smart Menu System</h3>
+            <p>
+              A smart digital ordering experience designed to reduce friction
+              between customers and service teams through faster browsing,
+              clearer item discovery, and efficient menu interaction.
+            </p>
+            <div class="tag-row" aria-label="Project technologies">
+              <span>Python</span>
+              <span>UI Logic</span>
+              <span>Automation</span>
+            </div>
+          </article>
+
+          <article class="project-card glass-card" data-project-card data-category="vision iot python" data-animate="fade-up">
+            <div class="project-index">02</div>
+            <h3>Gesture Controlled LED System</h3>
+            <p>
+              A hands-free LED control system using gesture recognition concepts
+              to connect computer vision interactions with embedded hardware
+              behavior.
+            </p>
+            <div class="tag-row" aria-label="Project technologies">
+              <span>OpenCV</span>
+              <span>MediaPipe</span>
+              <span>Arduino</span>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section-wrap" id="skills">
+        <div class="section-heading" data-animate="fade-up">
+          <p class="section-kicker">Skills</p>
+          <h2>Tools and technologies Sai uses to build.</h2>
+        </div>
+
+        <div class="skills-grid" aria-label="Technical skills">
+          <span class="skill-chip" data-animate="zoom-in">Python</span>
+          <span class="skill-chip" data-animate="zoom-in">C</span>
+          <span class="skill-chip" data-animate="zoom-in">HTML</span>
+          <span class="skill-chip" data-animate="zoom-in">CSS</span>
+          <span class="skill-chip" data-animate="zoom-in">OpenCV</span>
+          <span class="skill-chip" data-animate="zoom-in">MediaPipe</span>
+          <span class="skill-chip" data-animate="zoom-in">Arduino</span>
+          <span class="skill-chip" data-animate="zoom-in">GitHub</span>
+        </div>
+      </section>
+
+      <section class="section-wrap" id="github">
+        <div class="section-heading" data-animate="fade-up">
+          <p class="section-kicker">GitHub</p>
+          <h2>Consistent practice across code, experiments, and project builds.</h2>
+        </div>
+
+        <div class="github-panel glass-card" data-animate="fade-up">
+          <div class="github-summary">
+            <div>
+              <span class="github-label">Contribution Snapshot</span>
+              <strong><span data-counter data-target="214">0</span>+</strong>
+              <p>Practice commits, project updates, and learning iterations across development work.</p>
+            </div>
+            <a class="secondary-action github-link" href="https://github.com/234g1a0498" target="_blank" rel="noreferrer">View GitHub</a>
+          </div>
+
+          <div class="contribution-grid" data-contribution-grid aria-label="GitHub contribution activity">
+            <span data-level="1"></span>
+            <span data-level="2"></span>
+            <span data-level="0"></span>
+            <span data-level="3"></span>
+            <span data-level="2"></span>
+            <span data-level="4"></span>
+            <span data-level="1"></span>
+            <span data-level="0"></span>
+            <span data-level="2"></span>
+            <span data-level="3"></span>
+            <span data-level="1"></span>
+            <span data-level="4"></span>
+            <span data-level="2"></span>
+            <span data-level="1"></span>
+            <span data-level="3"></span>
+            <span data-level="0"></span>
+            <span data-level="4"></span>
+            <span data-level="2"></span>
+            <span data-level="1"></span>
+            <span data-level="3"></span>
+            <span data-level="2"></span>
+            <span data-level="4"></span>
+            <span data-level="1"></span>
+            <span data-level="0"></span>
+            <span data-level="3"></span>
+            <span data-level="2"></span>
+            <span data-level="4"></span>
+            <span data-level="1"></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-wrap" id="profiles">
+        <div class="section-heading" data-animate="fade-up">
+          <p class="section-kicker">Coding Profiles</p>
+          <h2>Explore Sai's developer profiles and problem-solving accounts.</h2>
+        </div>
+
+        <div class="profile-links-grid">
+          <a class="profile-link-card glass-card" href="https://github.com/234g1a0498" target="_blank" rel="noreferrer" data-animate="fade-up">
+            <span>GitHub</span>
+            <strong>234g1a0498</strong>
+            <small>Repositories and project code</small>
+          </a>
+          <a class="profile-link-card glass-card" href="https://www.linkedin.com/in/badvela-saibalaji-7088582bb" target="_blank" rel="noreferrer" data-animate="fade-up">
+            <span>LinkedIn</span>
+            <strong>Badvela Sai Balaji</strong>
+            <small>Professional profile and updates</small>
+          </a>
+          <a class="profile-link-card glass-card" href="https://leetcode.com/u/234g1a0498/" target="_blank" rel="noreferrer" data-animate="fade-up">
+            <span>LeetCode</span>
+            <strong>234g1a0498</strong>
+            <small>Problem solving and DSA practice</small>
+          </a>
+          <a class="profile-link-card glass-card" href="https://www.hackerrank.com/profile/234g1a0498" target="_blank" rel="noreferrer" data-animate="fade-up">
+            <span>HackerRank</span>
+            <strong>234g1a0498</strong>
+            <small>Coding challenges and skill badges</small>
+          </a>
+          <a class="profile-link-card glass-card" href="https://www.codechef.com/users/ece_234g1a0498" target="_blank" rel="noreferrer" data-animate="fade-up">
+            <span>CodeChef</span>
+            <strong>ece_234g1a0498</strong>
+            <small>Competitive programming profile</small>
+          </a>
+          <a class="profile-link-card glass-card" href="https://www.geeksforgeeks.org/user/234g1a0498/" target="_blank" rel="noreferrer" data-animate="fade-up">
+            <span>GeeksforGeeks</span>
+            <strong>234g1a0498</strong>
+            <small>Practice profile and learning activity</small>
+          </a>
+          <a class="profile-link-card glass-card" href="mailto:badvelasaibalaji@gmail.com" data-animate="fade-up">
+            <span>Email</span>
+            <strong>badvelasaibalaji@gmail.com</strong>
+            <small>Best email for recruiters and long-term contact</small>
+          </a>
+        </div>
+      </section>
+
+      <section class="section-wrap split-section" id="education">
+        <div data-animate="fade-up">
+          <p class="section-kicker">Education</p>
+          <h2>Academic foundation in electronics and communication.</h2>
+        </div>
+
+        <div class="timeline glass-card" data-animate="fade-left">
+          <article class="timeline-item">
+            <span class="timeline-dot"></span>
+            <p class="timeline-label">B.Tech ECE</p>
+            <h3>Srinivasa Ramanujan Institute of Technology</h3>
+            <p>Current CGPA: <strong>8.31</strong></p>
+          </article>
+
+          <article class="timeline-item">
+            <span class="timeline-dot"></span>
+            <p class="timeline-label">Intermediate</p>
+            <h3>Sri Medha V Junior College</h3>
+            <p>Marks: <strong>90%</strong></p>
+          </article>
+
+          <article class="timeline-item">
+            <span class="timeline-dot"></span>
+            <p class="timeline-label">10th Class</p>
+            <h3>Sri Gayathri English Medium High School</h3>
+            <p>Marks: <strong>98%</strong></p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section-wrap" id="certifications">
+        <div class="section-heading" data-animate="fade-up">
+          <p class="section-kicker">Certifications</p>
+          <h2>Learning credentials aligned with software, AI, and innovation.</h2>
+        </div>
+
+        <div class="certification-grid">
+          <article class="certification-card glass-card" data-animate="fade-up">
+            <span>AI + IoT</span>
+            <h3>IDE Bootcamp</h3>
+            <p>Hands-on innovation and entrepreneurship exposure for prototype-driven problem solving.</p>
+          </article>
+          <article class="certification-card glass-card" data-animate="fade-up">
+            <span>Computer Vision</span>
+            <h3>OpenCV & MediaPipe Practice</h3>
+            <p>Applied learning through gesture recognition and interaction-focused vision workflows.</p>
+          </article>
+          <article class="certification-card glass-card" data-animate="fade-up">
+            <span>Embedded Systems</span>
+            <h3>Arduino IoT Builds</h3>
+            <p>Project-based hardware integration using sensors, controllers, and connected output systems.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section-wrap" id="achievements">
+        <div class="section-heading" data-animate="fade-up">
+          <p class="section-kicker">Achievements</p>
+          <h2>Recognition across hackathons, project showcases, and innovation programs.</h2>
+        </div>
+
+        <div class="achievement-grid">
+          <article class="achievement-card glass-card" data-animate="fade-up">
+            <span>01</span>
+            <h3>First Prize</h3>
+            <p>NextGen 2025 IoT Hackathon</p>
+          </article>
+          <article class="achievement-card glass-card" data-animate="fade-up">
+            <span>02</span>
+            <h3>Best Project Award</h3>
+            <p>Sarvagyna 2025</p>
+          </article>
+          <article class="achievement-card glass-card" data-animate="fade-up">
+            <span>03</span>
+            <h3>Third Prize</h3>
+            <p>E-UDBHAV 2026</p>
+          </article>
+          <article class="achievement-card glass-card" data-animate="fade-up">
+            <span>04</span>
+            <h3>Participant</h3>
+            <p>IDE Bootcamp</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section-wrap contact-section" id="contact">
+        <div data-animate="fade-up">
+          <p class="section-kicker">Contact</p>
+          <h2>Let us build something useful together.</h2>
+          <p class="contact-copy">
+            Send a message about internships, project collaborations, or
+            software development opportunities.
+          </p>
+        </div>
+
+        <form class="contact-form glass-card" action="#" method="post" data-contact-form data-animate="fade-left">
+          <label>
+            <span>Name</span>
+            <input type="text" name="name" autocomplete="name" placeholder="Your name" required />
+          </label>
+          <label>
+            <span>Email</span>
+            <input type="email" name="email" autocomplete="email" placeholder="you@example.com" required />
+          </label>
+          <label>
+            <span>Message</span>
+            <textarea name="message" rows="5" placeholder="Tell Sai about the opportunity..." required></textarea>
+          </label>
+          <button class="primary-action form-button" type="submit">Send Message</button>
+          <p class="form-status" role="status" aria-live="polite" data-form-status></p>
+        </form>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>Designed and built for Sai Balaji Badvela.</p>
+      <a href="#home">Back to top</a>
+    </footer>
+  </body>
+</html>
