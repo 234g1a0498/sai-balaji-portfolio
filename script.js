@@ -18,6 +18,13 @@ document.addEventListener("DOMContentLoaded", () => {
   initContributionGrid();
   initContactForm();
   initHeaderDepth();
+
+  // Advanced Animations
+  initWordReveal(prefersReducedMotion);
+  initMagneticElements(prefersReducedMotion);
+  initTimelineScroll();
+  initProjectModals();
+  initAchievementModals();
 });
 
 function initLoadingAnimation() {
@@ -54,9 +61,33 @@ function initThemeToggle() {
 
   setTheme(initialTheme);
 
-  toggle.addEventListener("click", () => {
+  toggle.addEventListener("click", (e) => {
     const currentTheme = document.documentElement.getAttribute("data-theme") || "dark";
-    setTheme(currentTheme === "dark" ? "light" : "dark");
+    const newTheme = currentTheme === "dark" ? "light" : "dark";
+
+    if (!document.startViewTransition) {
+      setTheme(newTheme);
+      return;
+    }
+
+    const x = e.clientX ?? window.innerWidth / 2;
+    const y = e.clientY ?? window.innerHeight / 2;
+    document.documentElement.style.setProperty("--click-x", `${x}px`);
+    document.documentElement.style.setProperty("--click-y", `${y}px`);
+
+    if (newTheme === "dark") {
+      document.documentElement.classList.add("dark-transition");
+    } else {
+      document.documentElement.classList.remove("dark-transition");
+    }
+
+    const transition = document.startViewTransition(() => {
+      setTheme(newTheme);
+    });
+
+    transition.finished.then(() => {
+      document.documentElement.classList.remove("dark-transition");
+    });
   });
 }
 
@@ -542,4 +573,270 @@ function initHeaderDepth() {
 
   updateHeader();
   window.addEventListener("scroll", updateHeader, { passive: true });
+}
+
+// --- ADVANCED ANIMATIONS ---
+
+function initWordReveal(prefersReducedMotion) {
+  if (prefersReducedMotion) return;
+  const target = document.querySelector("[data-split-text]");
+  if (!target) return;
+
+  const wrapWords = (node) => {
+    if (node.nodeType === Node.TEXT_NODE) {
+      const words = node.textContent.split(/(\s+)/);
+      const fragment = document.createDocumentFragment();
+      let hasWord = false;
+      words.forEach(word => {
+        if (word.trim()) {
+          const span = document.createElement("span");
+          span.className = "word-span";
+          span.textContent = word;
+          fragment.appendChild(span);
+          hasWord = true;
+        } else {
+          fragment.appendChild(document.createTextNode(word));
+        }
+      });
+      if (hasWord) {
+        node.replaceWith(fragment);
+      }
+    } else if (node.nodeType === Node.ELEMENT_NODE && node.nodeName !== "SPAN" || node.classList.contains("gradient-text")) {
+      Array.from(node.childNodes).forEach(wrapWords);
+    }
+  };
+
+  Array.from(target.childNodes).forEach(wrapWords);
+
+  const spans = target.querySelectorAll(".word-span");
+  spans.forEach((span, index) => {
+    span.style.animationDelay = `${index * 45}ms`;
+  });
+}
+
+function initMagneticElements(prefersReducedMotion) {
+  if (prefersReducedMotion || !window.matchMedia("(pointer: fine)").matches) return;
+  const magnetics = document.querySelectorAll("[data-magnetic]");
+
+  magnetics.forEach(btn => {
+    btn.addEventListener("mousemove", (e) => {
+      const rect = btn.getBoundingClientRect();
+      const h = rect.width / 2;
+      const v = rect.height / 2;
+      const x = e.clientX - rect.left - h;
+      const y = e.clientY - rect.top - v;
+      
+      btn.classList.add("is-magnetic");
+      btn.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+    });
+
+    btn.addEventListener("mouseleave", () => {
+      btn.classList.remove("is-magnetic");
+      btn.style.transform = `translate(0px, 0px)`;
+    });
+  });
+}
+
+function initTimelineScroll() {
+  const timeline = document.querySelector(".timeline");
+  if (!timeline) return;
+
+  const fill = document.createElement("div");
+  fill.className = "timeline-fill";
+  timeline.appendChild(fill);
+
+  const updateFill = () => {
+    const rect = timeline.getBoundingClientRect();
+    const viewportHeight = window.innerHeight;
+    const startPoint = viewportHeight * 0.8;
+    const endPoint = viewportHeight * 0.2;
+    
+    const totalDistance = rect.height + startPoint - endPoint;
+    const currentDistance = startPoint - rect.top;
+    const progress = Math.max(0, Math.min(1, currentDistance / totalDistance));
+    
+    timeline.style.setProperty("--timeline-progress", progress);
+  };
+
+  window.addEventListener("scroll", updateFill, { passive: true });
+  updateFill();
+}
+
+function initProjectModals() {
+  const cards = document.querySelectorAll("[data-project-card]");
+  const modal = document.querySelector("[data-project-modal]");
+  const closeBtn = document.querySelector("[data-modal-close]");
+  if (!cards.length || !modal) return;
+
+  const mTitle = modal.querySelector("[data-modal-title]");
+  const mIndex = modal.querySelector("[data-modal-index]");
+  const mTags = modal.querySelector("[data-modal-tags]");
+  const mDesc = modal.querySelector("[data-modal-desc]");
+  const mMedia = modal.querySelector("[data-project-media]");
+  
+  const viewCodeBtn = modal.querySelector("[data-view-code-btn]");
+  const secTerminal = modal.querySelector("[data-security-terminal]");
+  const codeContainer = modal.querySelector("[data-code-container]");
+  const codeBlock = modal.querySelector("[data-code-block]");
+  const codeFilename = modal.querySelector("[data-code-filename]");
+  const copyBtn = modal.querySelector("[data-copy-btn]");
+
+  const openModal = (card) => {
+    // Populate text
+    mTitle.textContent = card.querySelector("h3").textContent;
+    mIndex.textContent = card.querySelector(".project-index").textContent;
+    mTags.innerHTML = card.querySelector(".tag-row").innerHTML;
+    mDesc.innerHTML = `<p>${card.querySelector("p").textContent}</p><br><p>This is a detailed view dynamically populated by the project modal. It provides more space for case studies, screenshots, and technical deep-dives without navigating away from the page.</p>`;
+    
+    // Populate Media
+    mMedia.innerHTML = "";
+    const mediaStr = card.getAttribute("data-media");
+    if (mediaStr) {
+      const paths = mediaStr.split(",");
+      paths.forEach(p => {
+        const path = p.trim();
+        if (path.endsWith(".mp4")) {
+          const vid = document.createElement("video");
+          vid.src = path;
+          vid.autoplay = true;
+          vid.loop = true;
+          vid.muted = true;
+          vid.playsInline = true;
+          mMedia.appendChild(vid);
+        } else if (path) {
+          const img = document.createElement("img");
+          img.src = path;
+          mMedia.appendChild(img);
+        }
+      });
+    }
+
+    // Prepare Code Viewer State
+    secTerminal.classList.add("is-hidden");
+    codeContainer.classList.add("is-hidden");
+    viewCodeBtn.style.display = "inline-block";
+    codeBlock.className = ""; // clear unselectable
+    
+    const isProtected = card.getAttribute("data-code-protected") === "true";
+    const targetId = card.getAttribute("data-code-target");
+    let rawCode = "";
+    if (targetId) {
+      const tmpl = document.getElementById(targetId);
+      if (tmpl) rawCode = (tmpl.textContent || tmpl.innerHTML || "").trim();
+    }
+
+    if (!rawCode) {
+      viewCodeBtn.style.display = "none";
+    }
+
+    viewCodeBtn.onclick = () => {
+      viewCodeBtn.style.display = "none";
+      if (isProtected) {
+        secTerminal.classList.remove("is-hidden");
+        const input = secTerminal.querySelector("[data-access-input]");
+        const submit = secTerminal.querySelector("[data-access-submit]");
+        const error = secTerminal.querySelector("[data-access-error]");
+        input.value = "";
+        error.textContent = "";
+
+        submit.onclick = () => {
+          if (input.value === "B@l@ji232323") {
+            secTerminal.classList.add("is-hidden");
+            codeContainer.classList.remove("is-hidden");
+            codeBlock.textContent = rawCode;
+            codeBlock.classList.add("unselectable-code");
+            codeFilename.textContent = "protected_core.cpp";
+            copyBtn.style.display = "none";
+          } else {
+            error.textContent = "> ERROR: Incorrect Access Code.";
+          }
+        };
+      } else {
+        codeContainer.classList.remove("is-hidden");
+        codeBlock.textContent = rawCode;
+        codeBlock.classList.remove("unselectable-code");
+        codeFilename.textContent = "source_code.py";
+        copyBtn.style.display = "inline-block";
+        copyBtn.onclick = () => {
+          navigator.clipboard.writeText(rawCode);
+          copyBtn.textContent = "Copied!";
+          setTimeout(() => copyBtn.textContent = "Copy Code", 2000);
+        };
+      }
+    };
+
+    modal.classList.add("is-open");
+    document.body.style.overflow = "hidden";
+  };
+
+  const closeModal = () => {
+    modal.classList.remove("is-open");
+    document.body.style.overflow = "";
+    setTimeout(() => { mMedia.innerHTML = ""; }, 400);
+  };
+
+  cards.forEach(card => {
+    card.style.cursor = "pointer";
+    card.addEventListener("click", () => openModal(card));
+  });
+
+  closeBtn.addEventListener("click", closeModal);
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal || e.target.closest('.project-modal-content') === modal.firstElementChild) {
+      closeModal();
+    }
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && modal.classList.contains("is-open")) closeModal();
+  });
+}
+
+function initAchievementModals() {
+  const cards = document.querySelectorAll(".achievement-card");
+  const modal = document.querySelector("[data-achievement-modal]");
+  const closeBtn = document.querySelector("[data-achievement-close]");
+  const gallery = document.querySelector("[data-achievement-gallery]");
+  if (!cards.length || !modal || !gallery) return;
+
+  const openModal = (imagePaths) => {
+    gallery.innerHTML = ""; // Clear existing
+    imagePaths.forEach(path => {
+      if (path.trim()) {
+        const img = document.createElement("img");
+        img.src = path.trim();
+        img.alt = "Achievement Certificate";
+        gallery.appendChild(img);
+      }
+    });
+    
+    modal.classList.add("is-open");
+    document.body.style.overflow = "hidden";
+  };
+
+  const closeModal = () => {
+    modal.classList.remove("is-open");
+    document.body.style.overflow = "";
+    // Wait for transition before clearing to avoid jumpiness
+    setTimeout(() => { gallery.innerHTML = ""; }, 400);
+  };
+
+  cards.forEach(card => {
+    const imagesAttr = card.getAttribute("data-images");
+    if (imagesAttr) {
+      card.style.cursor = "pointer";
+      card.addEventListener("click", () => {
+        openModal(imagesAttr.split(","));
+      });
+    }
+  });
+
+  closeBtn.addEventListener("click", closeModal);
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal || e.target.closest('.achievement-modal-content') === modal.firstElementChild) {
+      closeModal();
+    }
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && modal.classList.contains("is-open")) closeModal();
+  });
 }

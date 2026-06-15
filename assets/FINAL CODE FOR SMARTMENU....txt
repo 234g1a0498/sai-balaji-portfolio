@@ -1,0 +1,509 @@
+#include <WiFi.h>
+#include <WebServer.h>
+#include <Keypad.h>
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+// ===== Wi-Fi =====
+const char* ssid = "Rocky...";
+const char* password = "B@l@ji232323";
+
+// ===== Web server =====
+WebServer server(80);
+
+// ===== Hardware pins =====
+#define BUZZER_PIN 18
+#define LED_PIN 19
+#define IR_SENSOR_PIN 5
+
+LiquidCrystal_I2C lcd(0x27,16,2);
+
+// ===== Keypad =====
+const byte ROWS = 4;
+const byte COLS = 4;
+char keys[ROWS][COLS] = {
+  {'1','2','3','A'},
+  {'4','5','6','B'},
+  {'7','8','9','C'},
+  {'*','0','#','D'}
+};
+byte rowPins[ROWS] = {13,12,14,27};
+byte colPins[COLS] = {26,25,33,32};
+Keypad keypad = Keypad(makeKeymap(keys), rowPins, colPins, ROWS, COLS);
+
+// ===== Menu data =====
+String menu[] = {"1.Dosa","2.Idli","3.Ragi Mudda","4.Burger","5.Chapathi","6.Biryani"};
+float prices[] = {40,30,70,100,40,120};
+int calories[] = {250,200,700,700,60,800};
+int serveTime[] = {6,4,10,8,3,4};
+
+String recommend[] = {"1.Sweet Pongal","2.Vada","3.Chicken Curry","4.Fries+Juice","5.Gulab Jamun","6.Thums Up+Chicken Lollipop"};
+float recommendPrice[] = {20,10,60,50,30,150};
+int recommendCalories[] = {100,50,400,350,80,50};
+
+String todaysSpecial = "Gulab Jamun";
+float todaysSpecialPrice = 20;
+int todaysSpecialCalories = 100;
+
+String famousItem = "Palakova";
+float famousItemPrice = 50;
+int famousItemCalories = 150;
+
+int MENU_COUNT = 6;
+int tableNo = 0;
+
+// ===== Cart system =====
+struct CartItem{
+  String name;
+  int qty;
+  float price;
+  int cal;
+  String suggestion;
+  int serveMins;
+  String status; // Pending / Ready
+};
+
+#define MAX_CART 20
+CartItem cart[MAX_CART];
+int cartCount = 0;
+
+// ===== Confirmed orders =====
+#define MAX_ORDERS 50
+CartItem confirmedOrders[MAX_ORDERS];
+int confirmedCount = 0;
+
+// ===== Chat messages =====
+#define MAX_CHAT 100
+String chatMessages[MAX_CHAT];
+int chatCount = 0;
+
+// ===== Last total for QR =====
+float lastAmount = 0.0;
+
+// ===== Function declarations =====
+void showMenu();
+int getQuantity();
+void addToCart(int selectedItem, int qty);
+void showCart();
+void confirmOrder();
+void handleIR();
+void waitForTable();
+void displayWelcomeMessages();
+void handleOrderPage();
+void handleKitchenPage();
+void handleReady();
+void handleChatSend();
+void handleChatFetch();
+void handleOrdersFetch();
+
+// ===== Setup =====
+void setup(){
+  Serial.begin(115200);
+  pinMode(BUZZER_PIN,OUTPUT);
+  pinMode(LED_PIN,OUTPUT);
+  pinMode(IR_SENSOR_PIN,INPUT);
+
+  lcd.init();
+  lcd.backlight();
+
+  displayWelcomeMessages();
+
+  // Wi-Fi connect
+  lcd.clear();
+  lcd.print("Connecting WiFi...");
+  WiFi.begin(ssid,password);
+  while(WiFi.status()!=WL_CONNECTED){
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("\nConnected!");
+  Serial.println(WiFi.localIP());
+
+  lcd.clear();
+  lcd.print("WiFi Connected");
+  lcd.setCursor(0,1);
+  lcd.print(WiFi.localIP().toString());
+
+  // Server routes
+  server.on("/", handleOrderPage);
+  server.on("/order", handleOrderPage);
+  server.on("/kitchen", handleKitchenPage);
+  server.on("/ready", handleReady);
+  server.on("/sendChat", handleChatSend);
+  server.on("/getChat", handleChatFetch);
+  server.on("/getOrders", handleOrdersFetch);
+  server.begin();
+  Serial.println("Web server started!");
+
+  delay(2000);
+  waitForTable();
+  showMenu();
+}
+
+// ===== Loop =====
+void loop(){
+  server.handleClient();
+  handleIR();
+
+  char key = keypad.getKey();
+  if(!key) return;
+
+  if(key>='1' && key<='6'){
+    int selected = key-'1';
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print(menu[selected]);
+    lcd.setCursor(0,1);
+    lcd.print("Calories: ");
+    lcd.print(calories[selected]);
+    delay(1500);
+
+    lcd.clear();
+    lcd.print("Qty? then press #");
+    int qty = getQuantity();
+    addToCart(selected, qty);
+  } else if(key=='A'){
+    showCart();
+  } else if(key=='B'){
+    confirmOrder();
+  }
+}
+
+// ===== IR sensor =====
+void handleIR(){
+  int irValue = digitalRead(IR_SENSOR_PIN);
+  if(irValue==HIGH) lcd.noBacklight();
+  else lcd.backlight();
+}
+
+// ===== Table selection =====
+void waitForTable(){
+  lcd.clear();
+  lcd.print("Enter Table No:");
+  lcd.setCursor(0,1);
+  lcd.print("then press #");
+  String num="";
+  while(true){
+    char k = keypad.getKey();
+    if(!k) continue;
+    if(isdigit(k)){
+      num+=k;
+      lcd.setCursor(0,1);
+      lcd.print("Table: ");
+      lcd.print(num);
+    } else if(k=='#'){
+      if(num.length()==0) num="1";
+      tableNo=num.toInt();
+      break;
+    }
+  }
+
+  lcd.clear();
+  lcd.print("Table ");
+  lcd.print(tableNo);
+  lcd.setCursor(0,1);
+  lcd.print("Welcome!");
+  delay(1500);
+}
+
+// ===== Quantity input =====
+int getQuantity(){
+  String num="";
+  while(true){
+    char k = keypad.getKey();
+    if(!k) continue;
+    if(isdigit(k)){
+      num+=k;
+      lcd.setCursor(0,1);
+      lcd.print("Qty: ");
+      lcd.print(num);
+    } else if(k=='#'){
+      if(num.length()==0) num="1";
+      return num.toInt();
+    }
+  }
+}
+
+// ===== Welcome messages =====
+void displayWelcomeMessages(){
+  lcd.clear();
+  lcd.print("Welcome!");
+  delay(1500);
+  lcd.clear();
+  lcd.print("Today's Special:");
+  lcd.setCursor(0,1);
+  lcd.print(todaysSpecial);
+  delay(2000);
+  lcd.clear();
+  lcd.print("Famous Item:");
+  lcd.setCursor(0,1);
+  lcd.print(famousItem);
+  delay(2000);
+}
+
+// ===== Show menu =====
+void showMenu(){
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print(" Smart Menu ");
+  delay(1000);
+  for(int i=0;i<MENU_COUNT;i++){
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print(menu[i]);
+    lcd.setCursor(0,1);
+    lcd.print("Rs:");
+    lcd.print(prices[i]);
+    lcd.print(" Cal:");
+    lcd.print(calories[i]);
+    delay(2000);
+  }
+  lcd.clear();
+  lcd.print("Select 1-6");
+  lcd.setCursor(0,1);
+  lcd.print("A:Cart B:Send");
+}
+
+// ===== Add item to cart =====
+void addToCart(int selected, int qty){
+  lcd.clear();
+  lcd.print("Add Suggestion?");
+  lcd.setCursor(0,1);
+  lcd.print("#=Yes *=No");
+
+  bool addSuggest=false;
+  while(true){
+    char k = keypad.getKey();
+    if(k=='#'){ addSuggest=true; break; }
+    else if(k=='*') break;
+  }
+
+  if(cartCount<MAX_CART){
+    CartItem item;
+    item.name=menu[selected];
+    item.qty=qty;
+    item.price=prices[selected]*qty;
+    item.cal=calories[selected]*qty;
+    item.serveMins=serveTime[selected]*qty;
+    item.status="Pending";
+    if(addSuggest){
+      item.price+=recommendPrice[selected];
+      item.cal+=recommendCalories[selected];
+      item.serveMins+=2;
+      item.suggestion=recommend[selected];
+    } else item.suggestion="-";
+
+    cart[cartCount++]=item;
+
+    lcd.clear();
+    lcd.print("Added to Cart!");
+    delay(1000);
+    showMenu();
+  } else {
+    lcd.clear();
+    lcd.print("Cart Full!");
+    delay(1000);
+    showMenu();
+  }
+}
+
+// ===== Show cart =====
+void showCart(){
+  lcd.clear();
+  lcd.print("Cart Items:");
+  delay(1000);
+  for(int i=0;i<cartCount;i++){
+    lcd.clear();
+    lcd.print(cart[i].name);
+    lcd.setCursor(0,1);
+    lcd.print("Qty:");
+    lcd.print(cart[i].qty);
+    delay(1000);
+  }
+}
+
+// ===== Confirm order =====
+void confirmOrder(){
+  if(cartCount==0){
+    lcd.clear();
+    lcd.print("Cart Empty!");
+    delay(1000);
+    showMenu();
+    return;
+  }
+
+  lcd.clear();
+  lcd.print("Send Order?");
+  lcd.setCursor(0,1);
+  lcd.print("#=Yes *=Cancel");
+
+  unsigned long startTime = millis();
+  bool cancelled=false;
+  while(millis()-startTime<10000){
+    char k = keypad.getKey();
+    if(k=='*'){ cancelled=true; break; }
+    else if(k=='#') break;
+  }
+
+  if(cancelled){
+    lcd.clear();
+    lcd.print("Order Cancelled!");
+    tone(BUZZER_PIN,500,500);
+    digitalWrite(LED_PIN,HIGH);
+    delay(1000);
+    digitalWrite(LED_PIN,LOW);
+    cartCount=0;
+    showMenu();
+    return;
+  }
+
+  lcd.clear();
+  lcd.print("Order Sent!");
+  digitalWrite(LED_PIN,HIGH);
+  tone(BUZZER_PIN,2000,300);
+  delay(500);
+  digitalWrite(LED_PIN,LOW);
+
+  // Copy cart → confirmedOrders
+  for(int i=0;i<cartCount;i++){
+    if(confirmedCount<MAX_ORDERS){
+      confirmedOrders[confirmedCount++] = cart[i];
+    }
+  }
+
+  // Compute total
+  lastAmount=0;
+  for(int i=0;i<confirmedCount;i++) lastAmount+=confirmedOrders[i].price;
+
+  cartCount=0; // clear cart
+  showMenu();
+}
+
+// ===== Customer page =====
+void handleOrderPage(){
+  String html = "<!DOCTYPE html><html><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>Smart Menu - Customer</title>";
+  html += "<style>body{font-family:sans-serif;text-align:center;background:#eef2ff;}table{width:95%;margin:auto;border-collapse:collapse;}th,td{border:1px solid #ddd;padding:8px;text-align:center;}th{background:#60a5fa;color:white;}tr:nth-child(even){background:#f9fafb;}tr:hover{background:#eff6ff;}textarea{width:80%;height:50px;}button{padding:5px 10px;}</style></head><body>";
+  html += "<h1>🍽 Smart Menu - Customer</h1>";
+  html += "<div id='ordersSection'></div>"; // Orders table placeholder
+
+  // QR code section
+  String upiID="prathap143@oksbi";
+  String name="PRATHAP";
+  String upiLink="upi://pay?pa="+upiID+"&pn="+name+"&am="+String(lastAmount,2)+"&cu=INR";
+  upiLink.replace(" ","%20");
+  String qrUrl="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data="+upiLink;
+  html += "<br><h3>💳 Scan to Pay</h3>";
+  html += "<img src='"+qrUrl+"' alt='QR Code'><p><b>Total:</b> ₹"+String(lastAmount,2)+"</p>";
+
+  html += "<br><h3>💬 Chat with Kitchen</h3>";
+  html += "<div id='chatBox' style='width:80%;height:150px;border:1px solid #aaa;margin:auto;overflow:auto;background:#fff;padding:5px;'></div>";
+  html += "<textarea id='msg'></textarea><br><button onclick='sendMsg()'>Send</button>";
+
+  // JS for chat + orders refresh
+  html += "<script>"
+          "function sendMsg(){"
+          " var m=document.getElementById('msg').value;"
+          " if(m.length==0)return;"
+          " fetch('/sendChat?msg='+encodeURIComponent(m));"
+          " document.getElementById('msg').value='';"
+          "}"
+          "function fetchChat(){"
+          " fetch('/getChat').then(r=>r.text()).then(t=>{"
+          " document.getElementById('chatBox').innerHTML=t;"
+          " document.getElementById('chatBox').scrollTop=document.getElementById('chatBox').scrollHeight;"
+          "});"
+          "}"
+          "function fetchOrders(){"
+          " fetch('/getOrders').then(r=>r.text()).then(t=>{"
+          " document.getElementById('ordersSection').innerHTML=t;"
+          "});"
+          "}"
+          "setInterval(fetchChat,1000);"
+          "setInterval(fetchOrders,3000);"
+          "fetchChat();"
+          "fetchOrders();"
+          "</script>";
+  html += "</body></html>";
+  server.send(200,"text/html",html);
+}
+
+// ===== Kitchen page =====
+void handleKitchenPage(){
+  String html = "<!DOCTYPE html><html><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>Kitchen Dashboard</title>";
+  html += "<style>body{font-family:sans-serif;text-align:center;background:#fff8e7;}table{width:95%;margin:auto;border-collapse:collapse;}th,td{border:1px solid #ddd;padding:8px;text-align:center;}th{background:#f59e0b;color:white;}tr:nth-child(even){background:#fefce8;}tr:hover{background:#fef3c7;}button{padding:5px 10px;background:#10b981;color:white;border:none;border-radius:5px;}</style></head><body>";
+  html += "<h1>👨‍🍳 Kitchen Dashboard</h1>";
+  html += "<div id='ordersSection'></div>"; // Orders placeholder
+  html += "<br><h3>💬 Customer Chat</h3><div id='chatBox' style='width:80%;height:200px;border:1px solid #aaa;margin:auto;overflow:auto;background:#fff;padding:5px;'></div>";
+
+  html += "<script>"
+          "function fetchChat(){"
+          " fetch('/getChat').then(r=>r.text()).then(t=>{"
+          " document.getElementById('chatBox').innerHTML=t;"
+          " document.getElementById('chatBox').scrollTop=document.getElementById('chatBox').scrollHeight;"
+          "});"
+          "}"
+          "function fetchOrders(){"
+          " fetch('/getOrders').then(r=>r.text()).then(t=>{"
+          " document.getElementById('ordersSection').innerHTML=t;"
+          "});"
+          "}"
+          "setInterval(fetchChat,1000);"
+          "setInterval(fetchOrders,3000);"
+          "fetchChat();"
+          "fetchOrders();"
+          "</script>";
+
+  html += "</body></html>";
+  server.send(200,"text/html",html);
+}
+
+// ===== Orders fetch =====
+void handleOrdersFetch(){
+  String html="<table><tr><th>Table</th><th>Item</th><th>Qty</th><th>Calories</th><th>Price</th><th>Suggestions</th><th>Serve Time</th><th>Status</th><th>Action</th></tr>";
+  if(confirmedCount==0) html+="<tr><td colspan='9'>No orders yet</td></tr>";
+  else{
+    for(int i=0;i<confirmedCount;i++){
+      html+="<tr>";
+      html+="<td>"+String(tableNo)+"</td>";
+      html+="<td>"+confirmedOrders[i].name+"</td>";
+      html+="<td>"+String(confirmedOrders[i].qty)+"</td>";
+      html+="<td>"+String(confirmedOrders[i].cal)+"</td>";
+      html+="<td>"+String(confirmedOrders[i].price)+"</td>";
+      html+="<td>"+confirmedOrders[i].suggestion+"</td>";
+      html+="<td>"+String(confirmedOrders[i].serveMins)+" min</td>";
+      html+="<td>"+confirmedOrders[i].status+"</td>";
+      html+="<td><a href='/ready?item="+String(i)+"'><button>✅ Ready</button></a></td>";
+      html+="</tr>";
+    }
+  }
+  html+="</table>";
+  server.send(200,"text/html",html);
+}
+
+// ===== Kitchen Ready click =====
+void handleReady(){
+  if(server.hasArg("item")){
+    int idx = server.arg("item").toInt();
+    if(idx>=0 && idx<confirmedCount) confirmedOrders[idx].status="Ready";
+  }
+  server.sendHeader("Location","/kitchen");
+  server.send(303,"text/plain","");
+}
+
+// ===== Chat send =====
+void handleChatSend(){
+  if(server.hasArg("msg") && chatCount<MAX_CHAT){
+    String m = "Table "+String(tableNo)+": "+server.arg("msg");
+    chatMessages[chatCount++] = m;
+  }
+  server.send(200,"text/plain","OK");
+}
+
+// ===== Chat fetch =====
+void handleChatFetch(){
+  String t="";
+  for(int i=0;i<chatCount;i++){
+    t += chatMessages[i]+"<br>";
+  }
+  server.send(200,"text/html",t);
+}

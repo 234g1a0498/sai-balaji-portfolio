@@ -96,6 +96,7 @@
           aria-expanded="false"
           aria-controls="primary-menu"
           data-menu-toggle
+          data-magnetic
         >
           <span></span>
           <span></span>
@@ -119,6 +120,7 @@
           aria-label="Switch to light mode"
           aria-pressed="false"
           data-theme-toggle
+          data-magnetic
         >
           <span class="theme-toggle-icon" aria-hidden="true"></span>
         </button>
@@ -129,7 +131,7 @@
       <section class="hero-section section-wrap" id="home">
         <div class="hero-content" data-animate="fade-up">
           <p class="eyebrow">Available for internships, projects, and developer roles</p>
-          <h1>
+          <h1 data-split-text>
             Sai Balaji Badvela builds practical software across
             <span class="gradient-text">AI, Computer Vision, and IoT.</span>
           </h1>
@@ -149,9 +151,9 @@
           </p>
 
           <div class="hero-actions" aria-label="Portfolio actions">
-            <a class="primary-action" href="#projects">View Projects</a>
-            <a class="secondary-action" href="#contact">Contact Sai</a>
-            <a class="resume-action" href="assets/232323.pdf" download="Sai-Balaji-Badvela-Resume.pdf">
+            <a class="primary-action" href="#projects" data-magnetic>View Projects</a>
+            <a class="secondary-action" href="#contact" data-magnetic>Contact Sai</a>
+            <a class="resume-action" href="assets/232323.pdf" download="Sai-Balaji-Badvela-Resume.pdf" data-magnetic>
               Download Resume
             </a>
           </div>
@@ -216,7 +218,7 @@
         </div>
 
         <div class="project-grid">
-          <article class="project-card glass-card" data-project-card data-category="python automation" data-animate="fade-up">
+          <article class="project-card glass-card" data-project-card data-category="python automation" data-animate="fade-up" data-media="assets/smart menu system 1.jpeg,assets/smart menu system 2.jpeg,assets/smart menu system 3.mp4,assets/smaart menu system 4.mp4" data-code-target="smart-menu-code" data-code-protected="true">
             <div class="project-index">01</div>
             <h3>Digital Smart Menu System</h3>
             <p>
@@ -231,7 +233,7 @@
             </div>
           </article>
 
-          <article class="project-card glass-card" data-project-card data-category="vision iot python" data-animate="fade-up">
+          <article class="project-card glass-card" data-project-card data-category="vision iot python" data-animate="fade-up" data-media="assets/gesture controller led system.mp4" data-code-target="gesture-code" data-code-protected="false">
             <div class="project-index">02</div>
             <h3>Gesture Controlled LED System</h3>
             <p>
@@ -276,10 +278,10 @@
           <div class="github-summary">
             <div>
               <span class="github-label">Contribution Snapshot</span>
-              <strong><span data-counter data-target="214">0</span>+</strong>
+              <strong><span data-counter data-target="223">0</span>+</strong>
               <p>Practice commits, project updates, and learning iterations across development work.</p>
             </div>
-            <a class="secondary-action github-link" href="https://github.com/234g1a0498" target="_blank" rel="noreferrer">View GitHub</a>
+            <a class="secondary-action github-link" href="https://github.com/234g1a0498" target="_blank" rel="noreferrer" data-magnetic>View GitHub</a>
           </div>
 
           <div class="contribution-grid" data-contribution-grid aria-label="GitHub contribution activity">
@@ -422,22 +424,22 @@
         </div>
 
         <div class="achievement-grid">
-          <article class="achievement-card glass-card" data-animate="fade-up">
+          <article class="achievement-card glass-card" data-animate="fade-up" data-images="assets/first prize.jpeg">
             <span>01</span>
             <h3>First Prize</h3>
             <p>NextGen 2025 IoT Hackathon</p>
           </article>
-          <article class="achievement-card glass-card" data-animate="fade-up">
+          <article class="achievement-card glass-card" data-animate="fade-up" data-images="assets/best project award.jpeg,assets/best project award 1.jpeg">
             <span>02</span>
             <h3>Best Project Award</h3>
             <p>Sarvagyna 2025</p>
           </article>
-          <article class="achievement-card glass-card" data-animate="fade-up">
+          <article class="achievement-card glass-card" data-animate="fade-up" data-images="assets/third prize.jpeg">
             <span>03</span>
             <h3>Third Prize</h3>
             <p>E-UDBHAV 2026</p>
           </article>
-          <article class="achievement-card glass-card" data-animate="fade-up">
+          <article class="achievement-card glass-card" data-animate="fade-up" data-images="assets/ide bootcamp 1.jpeg,assets/ide bootcamp 2.jpeg">
             <span>04</span>
             <h3>Participant</h3>
             <p>IDE Bootcamp</p>
@@ -468,7 +470,7 @@
             <span>Message</span>
             <textarea name="message" rows="5" placeholder="Tell Sai about the opportunity..." required></textarea>
           </label>
-          <button class="primary-action form-button" type="submit">Send Message</button>
+          <button class="primary-action form-button" type="submit" data-magnetic>Send Message</button>
           <p class="form-status" role="status" aria-live="polite" data-form-status></p>
         </form>
       </section>
@@ -478,5 +480,728 @@
       <p>Designed and built for Sai Balaji Badvela.</p>
       <a href="#home">Back to top</a>
     </footer>
-  </body>
-</html>
+
+    <!-- Project Modal Template -->
+    <div class="project-modal-backdrop" data-project-modal aria-hidden="true">
+      <div class="project-modal-content">
+        <button class="modal-close" data-modal-close aria-label="Close project modal" data-magnetic>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+        <div class="modal-body">
+          <div class="modal-index" data-modal-index>00</div>
+          <h2 data-modal-title>Project Title</h2>
+          <div class="tag-row modal-tags" data-modal-tags></div>
+          
+          <div class="project-media-gallery" data-project-media>
+            <!-- Media injected here -->
+          </div>
+
+          <p class="modal-description" data-modal-desc>Project details will appear here.</p>
+          
+          <div class="modal-actions">
+            <button class="primary-action" data-magnetic data-view-code-btn>View Source Code</button>
+            <a href="#" class="secondary-action" data-magnetic>View Live</a>
+          </div>
+
+          <div class="security-terminal is-hidden" data-security-terminal>
+            <div class="terminal-header">
+              <span class="terminal-dots"><span></span><span></span><span></span></span>
+              <span>ACCESS_RESTRICTED.exe</span>
+            </div>
+            <div class="terminal-body">
+              <p>> ACCESS DENIED. Protected intellectual property.</p>
+              <p>> Ask Sai Balaji for authorization.</p>
+              <div class="terminal-input-row">
+                <span>> Enter Access Code: </span>
+                <input type="password" data-access-input autocomplete="off" spellcheck="false" />
+                <button data-access-submit>UNLOCK</button>
+              </div>
+              <p class="terminal-error" data-access-error></p>
+            </div>
+          </div>
+
+          <div class="code-viewer-container is-hidden" data-code-container>
+            <div class="code-header">
+              <span data-code-filename>source_code.py</span>
+              <button class="copy-btn" data-copy-btn>Copy Code</button>
+            </div>
+            <pre><code data-code-block></code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Achievement Modal Template -->
+    <div class="achievement-modal-backdrop" data-achievement-modal aria-hidden="true">
+      <div class="achievement-modal-content">
+        <button class="modal-close" data-achievement-close aria-label="Close image viewer" data-magnetic>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+        <div class="achievement-gallery" data-achievement-gallery>
+          <!-- Images injected by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Raw Source Code Storage -->
+    <script type="text/plain" id="smart-menu-code">
+#include &lt;WiFi.h&gt;
+#include &lt;WebServer.h&gt;
+#include &lt;Keypad.h&gt;
+#include &lt;Wire.h&gt;
+#include &lt;LiquidCrystal_I2C.h&gt;
+
+// ===== Wi-Fi =====
+const char* ssid = "Rocky...";
+const char* password = "B@l@ji232323";
+
+// ===== Web server =====
+WebServer server(80);
+
+// ===== Hardware pins =====
+#define BUZZER_PIN 18
+#define LED_PIN 19
+#define IR_SENSOR_PIN 5
+
+LiquidCrystal_I2C lcd(0x27,16,2);
+
+// ===== Keypad =====
+const byte ROWS = 4;
+const byte COLS = 4;
+char keys[ROWS][COLS] = {
+  {'1','2','3','A'},
+  {'4','5','6','B'},
+  {'7','8','9','C'},
+  {'*','0','#','D'}
+};
+byte rowPins[ROWS] = {13,12,14,27};
+byte colPins[COLS] = {26,25,33,32};
+Keypad keypad = Keypad(makeKeymap(keys), rowPins, colPins, ROWS, COLS);
+
+// ===== Menu data =====
+String menu[] = {"1.Dosa","2.Idli","3.Ragi Mudda","4.Burger","5.Chapathi","6.Biryani"};
+float prices[] = {40,30,70,100,40,120};
+int calories[] = {250,200,700,700,60,800};
+int serveTime[] = {6,4,10,8,3,4};
+
+String recommend[] = {"1.Sweet Pongal","2.Vada","3.Chicken Curry","4.Fries+Juice","5.Gulab Jamun","6.Thums Up+Chicken Lollipop"};
+float recommendPrice[] = {20,10,60,50,30,150};
+int recommendCalories[] = {100,50,400,350,80,50};
+
+String todaysSpecial = "Gulab Jamun";
+float todaysSpecialPrice = 20;
+int todaysSpecialCalories = 100;
+
+String famousItem = "Palakova";
+float famousItemPrice = 50;
+int famousItemCalories = 150;
+
+int MENU_COUNT = 6;
+int tableNo = 0;
+
+// ===== Cart system =====
+struct CartItem{
+  String name;
+  int qty;
+  float price;
+  int cal;
+  String suggestion;
+  int serveMins;
+  String status; // Pending / Ready
+};
+
+#define MAX_CART 20
+CartItem cart[MAX_CART];
+int cartCount = 0;
+
+// ===== Confirmed orders =====
+#define MAX_ORDERS 50
+CartItem confirmedOrders[MAX_ORDERS];
+int confirmedCount = 0;
+
+// ===== Chat messages =====
+#define MAX_CHAT 100
+String chatMessages[MAX_CHAT];
+int chatCount = 0;
+
+// ===== Last total for QR =====
+float lastAmount = 0.0;
+
+// ===== Function declarations =====
+void showMenu();
+int getQuantity();
+void addToCart(int selectedItem, int qty);
+void showCart();
+void confirmOrder();
+void handleIR();
+void waitForTable();
+void displayWelcomeMessages();
+void handleOrderPage();
+void handleKitchenPage();
+void handleReady();
+void handleChatSend();
+void handleChatFetch();
+void handleOrdersFetch();
+
+// ===== Setup =====
+void setup(){
+  Serial.begin(115200);
+  pinMode(BUZZER_PIN,OUTPUT);
+  pinMode(LED_PIN,OUTPUT);
+  pinMode(IR_SENSOR_PIN,INPUT);
+
+  lcd.init();
+  lcd.backlight();
+
+  displayWelcomeMessages();
+
+  // Wi-Fi connect
+  lcd.clear();
+  lcd.print("Connecting WiFi...");
+  WiFi.begin(ssid,password);
+  while(WiFi.status()!=WL_CONNECTED){
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("\nConnected!");
+  Serial.println(WiFi.localIP());
+
+  lcd.clear();
+  lcd.print("WiFi Connected");
+  lcd.setCursor(0,1);
+  lcd.print(WiFi.localIP().toString());
+
+  // Server routes
+  server.on("/", handleOrderPage);
+  server.on("/order", handleOrderPage);
+  server.on("/kitchen", handleKitchenPage);
+  server.on("/ready", handleReady);
+  server.on("/sendChat", handleChatSend);
+  server.on("/getChat", handleChatFetch);
+  server.on("/getOrders", handleOrdersFetch);
+  server.begin();
+  Serial.println("Web server started!");
+
+  delay(2000);
+  waitForTable();
+  showMenu();
+}
+
+// ===== Loop =====
+void loop(){
+  server.handleClient();
+  handleIR();
+
+  char key = keypad.getKey();
+  if(!key) return;
+
+  if(key&gt;='1' && key&lt;='6'){
+    int selected = key-'1';
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print(menu[selected]);
+    lcd.setCursor(0,1);
+    lcd.print("Calories: ");
+    lcd.print(calories[selected]);
+    delay(1500);
+
+    lcd.clear();
+    lcd.print("Qty? then press #");
+    int qty = getQuantity();
+    addToCart(selected, qty);
+  } else if(key=='A'){
+    showCart();
+  } else if(key=='B'){
+    confirmOrder();
+  }
+}
+
+// ===== IR sensor =====
+void handleIR(){
+  int irValue = digitalRead(IR_SENSOR_PIN);
+  if(irValue==HIGH) lcd.noBacklight();
+  else lcd.backlight();
+}
+
+// ===== Table selection =====
+void waitForTable(){
+  lcd.clear();
+  lcd.print("Enter Table No:");
+  lcd.setCursor(0,1);
+  lcd.print("then press #");
+  String num="";
+  while(true){
+    char k = keypad.getKey();
+    if(!k) continue;
+    if(isdigit(k)){
+      num+=k;
+      lcd.setCursor(0,1);
+      lcd.print("Table: ");
+      lcd.print(num);
+    } else if(k=='#'){
+      if(num.length()==0) num="1";
+      tableNo=num.toInt();
+      break;
+    }
+  }
+
+  lcd.clear();
+  lcd.print("Table ");
+  lcd.print(tableNo);
+  lcd.setCursor(0,1);
+  lcd.print("Welcome!");
+  delay(1500);
+}
+
+// ===== Quantity input =====
+int getQuantity(){
+  String num="";
+  while(true){
+    char k = keypad.getKey();
+    if(!k) continue;
+    if(isdigit(k)){
+      num+=k;
+      lcd.setCursor(0,1);
+      lcd.print("Qty: ");
+      lcd.print(num);
+    } else if(k=='#'){
+      if(num.length()==0) num="1";
+      return num.toInt();
+    }
+  }
+}
+
+// ===== Welcome messages =====
+void displayWelcomeMessages(){
+  lcd.clear();
+  lcd.print("Welcome!");
+  delay(1500);
+  lcd.clear();
+  lcd.print("Today's Special:");
+  lcd.setCursor(0,1);
+  lcd.print(todaysSpecial);
+  delay(2000);
+  lcd.clear();
+  lcd.print("Famous Item:");
+  lcd.setCursor(0,1);
+  lcd.print(famousItem);
+  delay(2000);
+}
+
+// ===== Show menu =====
+void showMenu(){
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print(" Smart Menu ");
+  delay(1000);
+  for(int i=0;i&lt;MENU_COUNT;i++){
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print(menu[i]);
+    lcd.setCursor(0,1);
+    lcd.print("Rs:");
+    lcd.print(prices[i]);
+    lcd.print(" Cal:");
+    lcd.print(calories[i]);
+    delay(2000);
+  }
+  lcd.clear();
+  lcd.print("Select 1-6");
+  lcd.setCursor(0,1);
+  lcd.print("A:Cart B:Send");
+}
+
+// ===== Add item to cart =====
+void addToCart(int selected, int qty){
+  lcd.clear();
+  lcd.print("Add Suggestion?");
+  lcd.setCursor(0,1);
+  lcd.print("#=Yes *=No");
+
+  bool addSuggest=false;
+  while(true){
+    char k = keypad.getKey();
+    if(k=='#'){ addSuggest=true; break; }
+    else if(k=='*') break;
+  }
+
+  if(cartCount&lt;MAX_CART){
+    CartItem item;
+    item.name=menu[selected];
+    item.qty=qty;
+    item.price=prices[selected]*qty;
+    item.cal=calories[selected]*qty;
+    item.serveMins=serveTime[selected]*qty;
+    item.status="Pending";
+    if(addSuggest){
+      item.price+=recommendPrice[selected];
+      item.cal+=recommendCalories[selected];
+      item.serveMins+=2;
+      item.suggestion=recommend[selected];
+    } else item.suggestion="-";
+
+    cart[cartCount++]=item;
+
+    lcd.clear();
+    lcd.print("Added to Cart!");
+    delay(1000);
+    showMenu();
+  } else {
+    lcd.clear();
+    lcd.print("Cart Full!");
+    delay(1000);
+    showMenu();
+  }
+}
+
+// ===== Show cart =====
+void showCart(){
+  lcd.clear();
+  lcd.print("Cart Items:");
+  delay(1000);
+  for(int i=0;i&lt;cartCount;i++){
+    lcd.clear();
+    lcd.print(cart[i].name);
+    lcd.setCursor(0,1);
+    lcd.print("Qty:");
+    lcd.print(cart[i].qty);
+    delay(1000);
+  }
+}
+
+// ===== Confirm order =====
+void confirmOrder(){
+  if(cartCount==0){
+    lcd.clear();
+    lcd.print("Cart Empty!");
+    delay(1000);
+    showMenu();
+    return;
+  }
+
+  lcd.clear();
+  lcd.print("Send Order?");
+  lcd.setCursor(0,1);
+  lcd.print("#=Yes *=Cancel");
+
+  unsigned long startTime = millis();
+  bool cancelled=false;
+  while(millis()-startTime&lt;10000){
+    char k = keypad.getKey();
+    if(k=='*'){ cancelled=true; break; }
+    else if(k=='#') break;
+  }
+
+  if(cancelled){
+    lcd.clear();
+    lcd.print("Order Cancelled!");
+    tone(BUZZER_PIN,500,500);
+    digitalWrite(LED_PIN,HIGH);
+    delay(1000);
+    digitalWrite(LED_PIN,LOW);
+    cartCount=0;
+    showMenu();
+    return;
+  }
+
+  lcd.clear();
+  lcd.print("Order Sent!");
+  digitalWrite(LED_PIN,HIGH);
+  tone(BUZZER_PIN,2000,300);
+  delay(500);
+  digitalWrite(LED_PIN,LOW);
+
+  // Copy cart → confirmedOrders
+  for(int i=0;i&lt;cartCount;i++){
+    if(confirmedCount&lt;MAX_ORDERS){
+      confirmedOrders[confirmedCount++] = cart[i];
+    }
+  }
+
+  // Compute total
+  lastAmount=0;
+  for(int i=0;i&lt;confirmedCount;i++) lastAmount+=confirmedOrders[i].price;
+
+  cartCount=0; // clear cart
+  showMenu();
+}
+
+// ===== Customer page =====
+void handleOrderPage(){
+  String html = "&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;head&gt;&lt;meta charset='UTF-8'&gt;&lt;meta name='viewport' content='width=device-width,initial-scale=1'&gt;&lt;title&gt;Smart Menu - Customer&lt;/title&gt;";
+  html += "&lt;style&gt;body{font-family:sans-serif;text-align:center;background:#eef2ff;}table{width:95%;margin:auto;border-collapse:collapse;}th,td{border:1px solid #ddd;padding:8px;text-align:center;}th{background:#60a5fa;color:white;}tr:nth-child(even){background:#f9fafb;}tr:hover{background:#eff6ff;}textarea{width:80%;height:50px;}button{padding:5px 10px;}&lt;/style&gt;&lt;/head&gt;&lt;body&gt;";
+  html += "&lt;h1&gt;🍽 Smart Menu - Customer&lt;/h1&gt;";
+  html += "&lt;div id='ordersSection'&gt;&lt;/div&gt;"; // Orders table placeholder
+
+  // QR code section
+  String upiID="prathap143@oksbi";
+  String name="PRATHAP";
+  String upiLink="upi://pay?pa="+upiID+"&pn="+name+"&am="+String(lastAmount,2)+"&cu=INR";
+  upiLink.replace(" ","%20");
+  String qrUrl="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data="+upiLink;
+  html += "&lt;br&gt;&lt;h3&gt;💳 Scan to Pay&lt;/h3&gt;";
+  html += "&lt;img src='"+qrUrl+"' alt='QR Code'&gt;&lt;p&gt;&lt;b&gt;Total:&lt;/b&gt; ₹"+String(lastAmount,2)+"&lt;/p&gt;";
+
+  html += "&lt;br&gt;&lt;h3&gt;💬 Chat with Kitchen&lt;/h3&gt;";
+  html += "&lt;div id='chatBox' style='width:80%;height:150px;border:1px solid #aaa;margin:auto;overflow:auto;background:#fff;padding:5px;'&gt;&lt;/div&gt;";
+  html += "&lt;textarea id='msg'&gt;&lt;/textarea&gt;&lt;br&gt;&lt;button onclick='sendMsg()'&gt;Send&lt;/button&gt;";
+
+  // JS for chat + orders refresh
+  html += "&lt;script&gt;"
+          "function sendMsg(){"
+          " var m=document.getElementById('msg').value;"
+          " if(m.length==0)return;"
+          " fetch('/sendChat?msg='+encodeURIComponent(m));"
+          " document.getElementById('msg').value='';"
+          "}"
+          "function fetchChat(){"
+          " fetch('/getChat').then(r=&gt;r.text()).then(t=&gt;{"
+          " document.getElementById('chatBox').innerHTML=t;"
+          " document.getElementById('chatBox').scrollTop=document.getElementById('chatBox').scrollHeight;"
+          "});"
+          "}"
+          "function fetchOrders(){"
+          " fetch('/getOrders').then(r=&gt;r.text()).then(t=&gt;{"
+          " document.getElementById('ordersSection').innerHTML=t;"
+          "});"
+          "}"
+          "setInterval(fetchChat,1000);"
+          "setInterval(fetchOrders,3000);"
+          "fetchChat();"
+          "fetchOrders();"
+          "&lt;/script&gt;";
+  html += "&lt;/body&gt;&lt;/html&gt;";
+  server.send(200,"text/html",html);
+}
+
+// ===== Kitchen page =====
+void handleKitchenPage(){
+  String html = "&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;head&gt;&lt;meta charset='UTF-8'&gt;&lt;meta name='viewport' content='width=device-width,initial-scale=1'&gt;&lt;title&gt;Kitchen Dashboard&lt;/title&gt;";
+  html += "&lt;style&gt;body{font-family:sans-serif;text-align:center;background:#fff8e7;}table{width:95%;margin:auto;border-collapse:collapse;}th,td{border:1px solid #ddd;padding:8px;text-align:center;}th{background:#f59e0b;color:white;}tr:nth-child(even){background:#fefce8;}tr:hover{background:#fef3c7;}button{padding:5px 10px;background:#10b981;color:white;border:none;border-radius:5px;}&lt;/style&gt;&lt;/head&gt;&lt;body&gt;";
+  html += "&lt;h1&gt;👨‍🍳 Kitchen Dashboard&lt;/h1&gt;";
+  html += "&lt;div id='ordersSection'&gt;&lt;/div&gt;"; // Orders placeholder
+  html += "&lt;br&gt;&lt;h3&gt;💬 Customer Chat&lt;/h3&gt;&lt;div id='chatBox' style='width:80%;height:200px;border:1px solid #aaa;margin:auto;overflow:auto;background:#fff;padding:5px;'&gt;&lt;/div&gt;";
+
+  html += "&lt;script&gt;"
+          "function fetchChat(){"
+          " fetch('/getChat').then(r=&gt;r.text()).then(t=&gt;{"
+          " document.getElementById('chatBox').innerHTML=t;"
+          " document.getElementById('chatBox').scrollTop=document.getElementById('chatBox').scrollHeight;"
+          "});"
+          "}"
+          "function fetchOrders(){"
+          " fetch('/getOrders').then(r=&gt;r.text()).then(t=&gt;{"
+          " document.getElementById('ordersSection').innerHTML=t;"
+          "});"
+          "}"
+          "setInterval(fetchChat,1000);"
+          "setInterval(fetchOrders,3000);"
+          "fetchChat();"
+          "fetchOrders();"
+          "&lt;/script&gt;";
+
+  html += "&lt;/body&gt;&lt;/html&gt;";
+  server.send(200,"text/html",html);
+}
+
+// ===== Orders fetch =====
+void handleOrdersFetch(){
+  String html="&lt;table&gt;&lt;tr&gt;&lt;th&gt;Table&lt;/th&gt;&lt;th&gt;Item&lt;/th&gt;&lt;th&gt;Qty&lt;/th&gt;&lt;th&gt;Calories&lt;/th&gt;&lt;th&gt;Price&lt;/th&gt;&lt;th&gt;Suggestions&lt;/th&gt;&lt;th&gt;Serve Time&lt;/th&gt;&lt;th&gt;Status&lt;/th&gt;&lt;th&gt;Action&lt;/th&gt;&lt;/tr&gt;";
+  if(confirmedCount==0) html+="&lt;tr&gt;&lt;td colspan='9'&gt;No orders yet&lt;/td&gt;&lt;/tr&gt;";
+  else{
+    for(int i=0;i&lt;confirmedCount;i++){
+      html+="&lt;tr&gt;";
+      html+="&lt;td&gt;"+String(tableNo)+"&lt;/td&gt;";
+      html+="&lt;td&gt;"+confirmedOrders[i].name+"&lt;/td&gt;";
+      html+="&lt;td&gt;"+String(confirmedOrders[i].qty)+"&lt;/td&gt;";
+      html+="&lt;td&gt;"+String(confirmedOrders[i].cal)+"&lt;/td&gt;";
+      html+="&lt;td&gt;"+String(confirmedOrders[i].price)+"&lt;/td&gt;";
+      html+="&lt;td&gt;"+confirmedOrders[i].suggestion+"&lt;/td&gt;";
+      html+="&lt;td&gt;"+String(confirmedOrders[i].serveMins)+" min&lt;/td&gt;";
+      html+="&lt;td&gt;"+confirmedOrders[i].status+"&lt;/td&gt;";
+      html+="&lt;td&gt;&lt;a href='/ready?item="+String(i)+"'&gt;&lt;button&gt;✅ Ready&lt;/button&gt;&lt;/a&gt;&lt;/td&gt;";
+      html+="&lt;/tr&gt;";
+    }
+  }
+  html+="&lt;/table&gt;";
+  server.send(200,"text/html",html);
+}
+
+// ===== Kitchen Ready click =====
+void handleReady(){
+  if(server.hasArg("item")){
+    int idx = server.arg("item").toInt();
+    if(idx&gt;=0 && idx&lt;confirmedCount) confirmedOrders[idx].status="Ready";
+  }
+  server.sendHeader("Location","/kitchen");
+  server.send(303,"text/plain","");
+}
+
+// ===== Chat send =====
+void handleChatSend(){
+  if(server.hasArg("msg") && chatCount&lt;MAX_CHAT){
+    String m = "Table "+String(tableNo)+": "+server.arg("msg");
+    chatMessages[chatCount++] = m;
+  }
+  server.send(200,"text/plain","OK");
+}
+
+// ===== Chat fetch =====
+void handleChatFetch(){
+  String t="";
+  for(int i=0;i<chatCount;i++){
+    t += chatMessages[i]+"<br>";
+  }
+  server.send(200,"text/html",t);
+}
+    </script>
+
+    <script type="text/plain" id="gesture-code">
+# HAND GESTURE MOUSE.py
+import cv2
+import mediapipe as mp
+import pyautogui
+import math
+import time
+
+# Screen size
+screen_width, screen_height = pyautogui.size()
+
+# MediaPipe initialization
+mp_hands = mp.solutions.hands
+hands = mp_hands.Hands(max_num_hands=1)
+mp_draw = mp.solutions.drawing_utils
+
+# Video capture
+cap = cv2.VideoCapture(0)
+
+# Click and scroll cooldowns
+last_left_click = 0
+last_right_click = 0
+click_cooldown = 0.5  # seconds
+
+prev_y_palm = None
+
+# Function to count fingers
+def count_fingers(hand_landmarks):
+    tips = [4, 8, 12, 16, 20]  # Thumb, Index, Middle, Ring, Pinky tips
+    count = 0
+    # For simplicity, check if tip is above PIP joint (y smaller = finger up)
+    for tip in tips[1:]:  # ignore thumb for fist detection
+        if hand_landmarks.landmark[tip].y < hand_landmarks.landmark[tip - 2].y:
+            count += 1
+    return count
+
+while True:
+    ret, frame = cap.read()
+    if not ret:
+        continue
+
+    frame = cv2.flip(frame, 1)  # mirror image
+    rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    results = hands.process(rgb_frame)
+
+    if results.multi_hand_landmarks:
+        for hand_landmarks in results.multi_hand_landmarks:
+            mp_draw.draw_landmarks(frame, hand_landmarks, mp_hands.HAND_CONNECTIONS)
+
+            # Cursor control: index finger tip
+            x_index = hand_landmarks.landmark[8].x
+            y_index = hand_landmarks.landmark[8].y
+            x_screen = int(x_index * screen_width)
+            y_screen = int(y_index * screen_height)
+            pyautogui.moveTo(x_screen, y_screen, duration=0.01)
+
+            # Measure hand distance (approximation using Z coordinate)
+            z_hand = hand_landmarks.landmark[0].z  # palm base Z
+            current_time = time.time()
+
+            # Left click: hand close (Z small)
+            if z_hand < -0.9 and current_time - last_left_click > click_cooldown:
+                pyautogui.click()
+                last_left_click = current_time
+
+            # Right click: fist (less than 2 fingers up)
+            fingers = count_fingers(hand_landmarks)
+            if fingers < 2 and current_time - last_right_click > click_cooldown:
+                pyautogui.click(button='right')
+                last_right_click = current_time
+
+            # Scroll: open palm vertical movement
+            y_palm = hand_landmarks.landmark[0].y
+            if prev_y_palm is not None:
+                delta = prev_y_palm - y_palm
+                if abs(delta) > 0.09:
+                    if delta > 0:
+                        pyautogui.scroll(150)  # scroll up
+                    else:
+                        pyautogui.scroll(-150)  # scroll down
+            prev_y_palm = y_palm
+
+    cv2.imshow("Air Gesture Mouse", frame)
+    if cv2.waitKey(1) & 0xFF == 27:  # ESC to exit
+        break
+
+cap.release()
+cv2.destroyAllWindows()
+
+
+# gesture.py
+import cv2
+import mediapipe as mp
+import serial
+import time
+
+# Initialize serial communication with Arduino
+arduino = serial.Serial(port='COM14', baudrate=9600, timeout=1)
+time.sleep(2)  # Wait for the serial connection to initialize
+
+# Initialize Mediapipe
+mp_hands = mp.solutions.hands
+hands = mp_hands.Hands()
+mp_drawing = mp.solutions.drawing_utils
+
+# Function to detect individual fingers (1 for up, 0 for down)
+def detect_fingers(image, hand_landmarks):
+    finger_tips = [8, 12, 16, 20]  # Index, Middle, Ring, Pinky
+    thumb_tip = 4
+    finger_states = [0, 0, 0, 0, 0]  # Thumb, Index, Middle, Ring, Pinky
+
+    # Check thumb
+    if hand_landmarks.landmark[thumb_tip].x < hand_landmarks.landmark[thumb_tip - 1].x:
+        finger_states[0] = 1  # Thumb is up
+
+    # Check the other fingers
+    for idx, tip in enumerate(finger_tips):
+        if hand_landmarks.landmark[tip].y < hand_landmarks.landmark[tip - 2].y:
+            finger_states[idx + 1] = 1  # Other fingers are up
+
+    return finger_states
+
+# Start capturing video
+cap = cv2.VideoCapture(0)
+
+while cap.isOpened():
+    success, image = cap.read()
+    if not success:
+        break
+
+    image = cv2.cvtColor(cv2.flip(image, 1), cv2.COLOR_BGR2RGB)
+    results = hands.process(image)
+    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+
+    if results.multi_hand_landmarks:
+        for hand_landmarks in results.multi_hand_landmarks:
+            mp_drawing.draw_landmarks(image, hand_landmarks, mp_hands.HAND_CONNECTIONS)
+            fingers_state = detect_fingers(image, hand_landmarks)
+            arduino.write(bytes(fingers_state))  # Send list of fingers as bytes
+            print(f"Fingers State: {fingers_state}")
+
+    cv2.imshow('Hand Tracking', image)
+    if cv2.waitKey(5) & 0xFF == 27:
+        break
+
+cap.release()
+cv2.destroyAllWindows()
+arduino.close()
+    </script>
