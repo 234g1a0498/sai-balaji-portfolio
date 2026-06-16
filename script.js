@@ -719,6 +719,7 @@ function initProjectModals() {
     
     const isProtected = card.getAttribute("data-code-protected") === "true";
     const targetId = card.getAttribute("data-code-target");
+    const filename = card.getAttribute("data-code-filename") || (isProtected ? "protected_core.cpp" : "source_code.py");
     let rawCode = "";
     if (targetId) {
       const tmpl = document.getElementById(targetId);
@@ -745,7 +746,7 @@ function initProjectModals() {
             codeContainer.classList.remove("is-hidden");
             codeBlock.textContent = rawCode;
             codeBlock.classList.add("unselectable-code");
-            codeFilename.textContent = "protected_core.cpp";
+            codeFilename.textContent = filename;
             copyBtn.style.display = "none";
           } else {
             error.textContent = "> ERROR: Incorrect Access Code.";
@@ -755,7 +756,7 @@ function initProjectModals() {
         codeContainer.classList.remove("is-hidden");
         codeBlock.textContent = rawCode;
         codeBlock.classList.remove("unselectable-code");
-        codeFilename.textContent = "source_code.py";
+        codeFilename.textContent = filename;
         copyBtn.style.display = "inline-block";
         copyBtn.onclick = () => {
           navigator.clipboard.writeText(rawCode);

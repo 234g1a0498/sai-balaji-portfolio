@@ -218,7 +218,7 @@
         </div>
 
         <div class="project-grid">
-          <article class="project-card glass-card" data-project-card data-category="python automation" data-animate="fade-up" data-media="assets/smart menu system 1.jpeg,assets/smart menu system 2.jpeg,assets/smart menu system 3.mp4,assets/smaart menu system 4.mp4" data-code-target="smart-menu-code" data-code-protected="true">
+          <article class="project-card glass-card" data-project-card data-category="python automation" data-animate="fade-up" data-media="assets/smart menu system 1.jpeg,assets/smart menu system 2.jpeg,assets/smart menu system 3.mp4,assets/smaart menu system 4.mp4" data-code-target="smart-menu-code" data-code-protected="true" data-code-filename="SmartMenu.ino">
             <div class="project-index">01</div>
             <h3>Digital Smart Menu System</h3>
             <p>
@@ -233,7 +233,7 @@
             </div>
           </article>
 
-          <article class="project-card glass-card" data-project-card data-category="vision iot python" data-animate="fade-up" data-media="assets/gesture controller led system.mp4" data-code-target="gesture-code" data-code-protected="false">
+          <article class="project-card glass-card" data-project-card data-category="vision iot python" data-animate="fade-up" data-media="assets/gesture controller led system.mp4" data-code-target="gesture-code" data-code-protected="false" data-code-filename="GestureController.py">
             <div class="project-index">02</div>
             <h3>Gesture Controlled LED System</h3>
             <p>
@@ -245,6 +245,22 @@
               <span>OpenCV</span>
               <span>MediaPipe</span>
               <span>Arduino</span>
+            </div>
+          </article>
+
+          <article class="project-card glass-card" data-project-card data-category="python" data-animate="fade-up" data-media="assets/pyvision.mp4" data-code-target="pyvision-code" data-code-protected="false" data-code-filename="pyvision_backend.py">
+            <div class="project-index">03</div>
+            <h3>Pyvision Compiler</h3>
+            <p>
+              An interactive Python code execution visualizer. Traces executions
+              line-by-line using a custom sys.settrace sandbox on the backend,
+              rendering animated Call Stacks, dynamic Heap Graphs (React Flow),
+              and AI explanations.
+            </p>
+            <div class="tag-row" aria-label="Project technologies">
+              <span>Python</span>
+              <span>FastAPI</span>
+              <span>React Flow</span>
             </div>
           </article>
         </div>
@@ -1204,4 +1220,276 @@ while cap.isOpened():
 cap.release()
 cv2.destroyAllWindows()
 arduino.close()
+    </script>
+
+    <script type="text/plain" id="pyvision-code">
+# ==========================================
+# main.py
+# ==========================================
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from models import CodeRequestModel, TraceResultModel
+from tracer import PyVisionTracer
+
+app = FastAPI(title="PyVision Compiler API")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@app.get("/")
+def read_root():
+    return {"message": "Welcome to PyVision Compiler API"}
+
+@app.post("/execute", response_model=TraceResultModel)
+def execute_code(request: CodeRequestModel):
+    tracer = PyVisionTracer(max_steps=2000)
+    result = tracer.run_code(request.code)
+    return result
+
+class ExplainRequestModel(BaseModel):
+    code: str
+    step_data: dict
+
+@app.post("/explain")
+def explain_step(request: ExplainRequestModel):
+    from explainer import generate_explanation
+    text = generate_explanation(request.code, request.step_data)
+    return {"explanation": text}
+
+
+# ==========================================
+# models.py
+# ==========================================
+from pydantic import BaseModel
+from typing import List, Dict, Any, Optional, Union
+
+class VariableModel(BaseModel):
+    name: str
+    type: str
+    value: str # String representation
+    ref_id: Optional[str] = None # Used if it points to a heap object
+
+class FrameModel(BaseModel):
+    name: str
+    line: int
+    locals: List[VariableModel]
+
+class HeapObjectModel(BaseModel):
+    id: str
+    type: str
+    value: Any # The actual JSON representation of the object (list, dict, etc)
+
+class TraceStepModel(BaseModel):
+    step_num: int
+    line: int
+    event: str # 'line', 'call', 'return', 'exception'
+    stdout: str
+    frames: List[FrameModel]
+    heap: Dict[str, HeapObjectModel]
+
+class TraceResultModel(BaseModel):
+    status: str # 'success', 'error'
+    error_message: Optional[str] = None
+    steps: List[TraceStepModel]
+
+class CodeRequestModel(BaseModel):
+    code: str
+
+
+# ==========================================
+# tracer.py
+# ==========================================
+import sys
+import io
+import traceback
+from typing import Any, Dict, List
+from models import TraceResultModel, TraceStepModel, FrameModel, VariableModel, HeapObjectModel
+
+PRIMITIVE_TYPES = (int, float, str, bool, type(None))
+
+class PyVisionTracer:
+    def __init__(self, max_steps: int = 1000):
+        self.steps: List[TraceStepModel] = []
+        self.max_steps = max_steps
+        self.step_count = 0
+        self.heap: Dict[str, HeapObjectModel] = {}
+        self.stdout_capture = io.StringIO()
+        self.original_stdout = sys.stdout
+
+    def _get_ref_id(self, obj: Any) -> str:
+        return str(id(obj))
+
+    def _serialize_object(self, obj: Any) -> Any:
+        if isinstance(obj, (list, tuple, set)):
+            res = []
+            for v in obj:
+                vt, vs, vr = self._process_value(v)
+                res.append({"type": vt, "value": vs, "ref": vr})
+            return res
+        elif isinstance(obj, dict):
+            res = {}
+            for k, v in obj.items():
+                vt, vs, vr = self._process_value(v)
+                res[str(k)] = {"type": vt, "value": vs, "ref": vr}
+            return res
+        else:
+            return str(obj)
+
+    def _process_value(self, value: Any) -> tuple[str, str, str | None]:
+        # returns (type_str, value_str, ref_id)
+        val_type = type(value).__name__
+        if isinstance(value, PRIMITIVE_TYPES):
+            return val_type, repr(value), None
+        
+        ref_id = self._get_ref_id(value)
+        if ref_id not in self.heap:
+            self.heap[ref_id] = HeapObjectModel(
+                id=ref_id,
+                type=val_type,
+                value=self._serialize_object(value)
+            )
+        else:
+            # Update heap object in case it mutated
+            self.heap[ref_id].value = self._serialize_object(value)
+            
+        return val_type, str(value), ref_id
+
+    def trace_callback(self, frame, event, arg):
+        if self.step_count >= self.max_steps:
+            return None # Stop tracing
+
+        # Ignore tracer internal frames or standard library frames if needed
+        # For a sandbox, we might only want to trace the user's code, which we'll execute as '<string>'
+        if frame.f_code.co_filename != "<string>":
+             return self.trace_callback
+
+        self.step_count += 1
+
+        # Capture Frames (Call Stack)
+        frames_list = []
+        f = frame
+        while f is not None and f.f_code.co_filename == "<string>":
+            f_locals_list = []
+            for n, v in f.f_locals.items():
+                if n.startswith('__'): continue
+                vt, vs, vr = self._process_value(v)
+                f_locals_list.append(VariableModel(name=n, type=vt, value=vs, ref_id=vr))
+            
+            frames_list.insert(0, FrameModel(
+                name=f.f_code.co_name,
+                line=f.f_lineno,
+                locals=f_locals_list
+            ))
+            f = f.f_back
+
+        # Copy the heap deeply enough for snapshots. Since values are primitive strings/lists, model.copy() or dict() works.
+        # Deepcopying the heap values is important so history doesn't overwrite.
+        import copy
+        current_heap = copy.deepcopy(self.heap)
+
+        step = TraceStepModel(
+            step_num=self.step_count,
+            line=frame.f_lineno,
+            event=event,
+            stdout=self.stdout_capture.getvalue(),
+            frames=frames_list,
+            heap=current_heap
+        )
+        self.steps.append(step)
+        return self.trace_callback
+
+    def run_code(self, code: str) -> TraceResultModel:
+        self.steps = []
+        self.step_count = 0
+        self.heap = {}
+        self.stdout_capture = io.StringIO()
+        
+        sys.stdout = self.stdout_capture
+        sys.settrace(self.trace_callback)
+        
+        error_msg = None
+        status = "success"
+        
+        try:
+            global_env = {}
+            # Execute with '<string>' filename to match the trace logic
+            exec(compile(code, '<string>', 'exec'), global_env)
+        except Exception as e:
+            status = "error"
+            error_msg = "".join(traceback.format_exception_only(type(e), e))
+        finally:
+            sys.settrace(None)
+            sys.stdout = self.original_stdout
+
+            import copy
+            final_step = TraceStepModel(
+                step_num=self.step_count + 1,
+                line=0,
+                event="finish",
+                stdout=self.stdout_capture.getvalue(),
+                frames=[],
+                heap=copy.deepcopy(self.heap)
+            )
+            self.steps.append(final_step)
+
+        return TraceResultModel(
+            status=status,
+            error_message=error_msg,
+            steps=self.steps
+        )
+
+
+# ==========================================
+# explainer.py
+# ==========================================
+import os
+import json
+from dotenv import load_dotenv
+
+load_dotenv()
+
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+
+if GEMINI_API_KEY:
+    from google import genai
+    client = genai.Client(api_key=GEMINI_API_KEY)
+else:
+    client = None
+
+def generate_explanation(code: str, step_data: dict) -> str:
+    if not client:
+        line_num = step_data.get("line", "?")
+        return f"Executing line {line_num}. Add GEMINI_API_KEY to backend/.env to see AI explanations!"
+    
+    prompt = f"""
+You are an expert Python tutor explaining code execution step-by-step.
+The user is executing the following Python code:
+```python
+{code}
+```
+
+We are currently at line {step_data.get('line')}.
+The current execution state (JSON) is:
+{json.dumps(step_data, indent=2)}
+
+Please provide a concise, 1-2 sentence explanation of what is happening on this exact line and how the state changed. 
+Be educational but brief. Do not use code blocks for your answer, just plain text or light markdown.
+"""
+    try:
+        response = client.models.generate_content(
+            model='gemini-2.5-flash',
+            contents=prompt,
+        )
+        return response.text
+    except Exception as e:
+        error_msg = str(e)
+        if "429" in error_msg or "RESOURCE_EXHAUSTED" in error_msg or "Quota" in error_msg:
+            return "Gemini Rate Limit Reached (Free Tier). Please wait a minute for the quota to reset."
+        return f"AI Generation Failed: {error_msg}"
     </script>
